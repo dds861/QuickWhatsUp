@@ -1,12 +1,17 @@
 package com.quickwhatsup.dnurgaliyev.quickwhatsup;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -16,6 +21,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ContactHelper contactHelper = new ContactHelper();
     boolean doesContactExist;
 
+    ListView listView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,10 +30,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         btn = (Button) findViewById(R.id.btn1);
         etPhoneNumber = (EditText) findViewById(R.id.etPhoneNumber);
+        listView=(ListView)findViewById(R.id.listView);
 
-//        Cursor cursor = getContentResolver().query(android.provider.CallLog.Calls.CONTENT_URI,null, null, null,null);
-//        Log.d(TAG,;)
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
 
+        Cursor cursor = getApplicationContext().getContentResolver().query(android.provider.CallLog.Calls.CONTENT_URI, null, null, null, null);
+        GetRecentContacts getRecentContacts = new GetRecentContacts();
+        MyAdapter adapter = new MyAdapter(getRecentContacts.getRecentContacts(cursor));
+
+
+        listView.setAdapter(adapter);
         btn.setOnClickListener(this);
 
 
