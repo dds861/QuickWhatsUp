@@ -102,4 +102,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 //------------------------------------------------------End: Delete contact
     }
+    //
 }
